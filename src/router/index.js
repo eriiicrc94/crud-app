@@ -6,7 +6,10 @@ import ShowView from '../components/ShowView.vue'
 
 
 const routes = [
-
+  {
+    path: '/',
+    redirect: '/show'
+  },
   {
     path: '/register',
     name: 'register',
@@ -21,8 +24,7 @@ const routes = [
     path: '/show',
     name: 'show',
     component: ShowView
-  },
-
+  }
 ]
 
 const router = createRouter({
