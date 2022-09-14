@@ -1,3 +1,54 @@
+<script setup>
+import { reactive, computed, onMounted } from 'vue'
+import EmployeeView from './employee/EmployeeView.vue'
+import { db } from '../firebase'
+import { collection, getDocs } from 'firebase/firestore'
+
+const data = reactive({
+  isLoading: false,
+  employees: []
+})
+
+const showEmployees = computed(() => {
+  return data.employees.length > 0 && data.isLoading === false
+})
+
+const showSpinner = computed(() => {
+  return data.isLoading === true
+})
+
+async function getEmployees() {
+  data.isLoading = true
+  const querySnapshot = await getDocs(collection(db, 'employees'))
+  try {
+    if (querySnapshot.docs.length > 0) {
+      querySnapshot.forEach((doc) => {
+        data.isLoading = false
+        let result = {
+          id: doc.id,
+          name: doc.data().name,
+          email: doc.data().email
+        }
+        data.employees.push(result)
+      })
+    } else {
+      data.isLoading = false
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+function employeeDeleted(id) {
+  data.employees = data.employees.filter(employee => employee.id !== id)
+}
+
+onMounted(async () => {
+  getEmployees()
+})
+
+</script>
+
 <template>
     <div class="container">
         <h1>Employees List</h1>
@@ -6,7 +57,7 @@
             <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
         </div>
         <div v-else-if="showEmployees" class="cards">
-            <employee-view v-for="emp in employees"
+            <employee-view v-for="emp in data.employees"
                 :key="emp.id"
                 :name="emp.name"
                 :email="emp.email"
@@ -17,60 +68,6 @@
         <div v-else>There are not employees registered, maybe do you want to <router-link to="register">register</router-link> ?</div>
     </div>
 </template>
-
-<script>
-import EmployeeView from './employee/EmployeeView.vue'
-import { db } from '../firebase'
-import { collection, getDocs } from 'firebase/firestore'
-export default {
-    components: {
-        EmployeeView
-    },
-    data() {
-        return {
-            isLoading: false,
-            employees: []
-        }
-    },
-    computed: {
-        showEmployees() {
-            return this.employees.length > 0 && this.isLoading === false
-        },
-        showSpinner() {
-            return this.isLoading === true
-        }
-    },
-    methods: {
-      async getEmployees() {
-        this.isLoading = true
-        const querySnapshot = await getDocs(collection(db, 'employees'))
-        try {
-          if (querySnapshot.docs.length > 0) {
-            querySnapshot.forEach((doc) => {
-              this.isLoading = false
-              let data = {
-                id: doc.id,
-                name: doc.data().name,
-                email: doc.data().email
-              }
-              this.employees.push(data)
-            })
-          } else {
-            this.isLoading = false
-          }
-        } catch (e) {
-          console.log(e)
-        }
-      },
-      employeeDeleted(id) {
-        this.employees = this.employees.filter(employee => employee.id !== id)
-      }
-    },
-    async mounted() {
-      this.getEmployees()
-  }  
-}
-</script>
 
 <style lang="scss" scoped>
 
