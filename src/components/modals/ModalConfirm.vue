@@ -1,41 +1,43 @@
+<script setup>
+import ButtonCommon from '../common/ButtonCommon.vue'
+import { defineProps, computed, defineEmits } from 'vue'
+
+const props = defineProps({
+    name: String,
+    comp: String,
+    title: String
+})
+
+const emit = defineEmits('closeModal')
+
+const isRegisterComp = computed(() => {
+    return props.comp === 'register-view'
+})
+
+const isEmployeeViewComp = computed(() => {
+    return props.comp === 'employee-view'
+})
+
+function closeModal() {
+    emit('closeModal')
+}
+</script>
+
 <template>
     <div class="modal-confirm">
         <div class="modal-content text-center">
             <h1>{{title}}</h1>
             <div v-if="isRegisterComp">
-                <p ><b>{{name}}</b> has been registered successfully!!</p>
+                <p ><b>{{props.name}}</b> has been registered successfully!!</p>
             </div>
             <div v-if="isEmployeeViewComp">
-                <p>Are you sure do you want to delete <b>{{name}}</b>?</p>
+                <p>Are you sure do you want to delete <b>{{props.name}}</b>?</p>
             </div>            
             <button-common @click="closeModal()"
               title='Confirm'/>
         </div>
     </div>
 </template>
-
-<script>
-import ButtonCommon from '../common/ButtonCommon.vue';
-export default {
-    props: ['name', 'comp', 'title'],
-    components: {
-        ButtonCommon
-    },
-    computed: {
-        isRegisterComp() {
-            return this.comp === 'register-view'
-        },
-        isEmployeeViewComp() {
-            return this.comp === 'employee-view'
-        }
-    },
-    methods: {
-        closeModal() {
-            this.$emit('closeModal')
-        }
-    }
-}
-</script>
 
 <style scoped>
 .modal-confirm {

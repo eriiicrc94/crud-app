@@ -18,20 +18,19 @@
     return data.isDeleteClick
   })
 
-  const emit = defineEmits('deleteEmployee')
+  const emit = defineEmits('deleteEmployeeEmit')
 
   function openEditModal() {
     console.log('edit')
   }
 
-  function deleteEmployee() {
-    
+  function deleteEmployee() {    
     data.isDeleteClick = true
   }
 
   async function closeModal(id) {
     await deleteDoc(doc(db, 'employees', id))
-    emit('deleteEmployee')
+    emit('deleteEmployeeEmit')
     data.isDeleteClick = false
   }
 

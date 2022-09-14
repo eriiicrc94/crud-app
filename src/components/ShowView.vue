@@ -11,7 +11,7 @@
                 :name="emp.name"
                 :email="emp.email"
                 :id="emp.id"
-                @deleteEmployee="employeeDeleted(emp.id)"
+                @deleteEmployeeEmit="employeeDeleted(emp.id)"
             />
         </div>
         <div v-else>There are not employees registered, maybe do you want to <router-link to="register">register</router-link> ?</div>
