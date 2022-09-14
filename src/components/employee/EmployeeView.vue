@@ -1,11 +1,50 @@
+<script setup>
+  import { reactive, defineEmits, defineProps, computed } from 'vue'
+  import ModalConfirm from '../modals/ModalConfirm.vue'
+  import { doc, deleteDoc } from 'firebase/firestore'
+  import { db } from '../../firebase'
+
+  const props = defineProps({
+    id: String,
+    name: String, 
+    email: String
+  })
+
+  const data = reactive({
+    isDeleteClick: false
+  })
+
+  const isDeleteClicked = computed(() => {
+    return data.isDeleteClick
+  })
+
+  const emit = defineEmits('deleteEmployee')
+
+  function openEditModal() {
+    console.log('edit')
+  }
+
+  function deleteEmployee() {
+    
+    data.isDeleteClick = true
+  }
+
+  async function closeModal(id) {
+    await deleteDoc(doc(db, 'employees', id))
+    emit('deleteEmployee')
+    data.isDeleteClick = false
+  }
+
+</script>
+
 <template>
     <div class="card">
       <div class="container">
-        <h4 class="mt-4"><b>{{name}}</b></h4> 
-        <p class="mt-4 mb-5">email: {{email}}</p> 
+        <h4 class="mt-4"><b>{{props.name}}</b></h4> 
+        <p class="mt-4 mb-5">email: {{props.email}}</p> 
         <div class="container right-position">
           <button class="btn btn-primary" @click="openEditModal()">Edit</button>
-          <button class="btn btn-dark" @click="deleteEmployee(id)">Delete</button>  
+          <button class="btn btn-dark" @click="deleteEmployee()">Delete</button>  
         </div>
       </div>
       <modal-confirm 
@@ -17,42 +56,6 @@
       </modal-confirm>      
     </div>
 </template>
-
-<script>
-import ModalConfirm from '../modals/ModalConfirm.vue'
-import { doc, deleteDoc } from 'firebase/firestore'
-import { db } from '../../firebase'
-
-export default {
-    components: {
-      ModalConfirm
-    },
-    data() {
-      return {
-        isDeleteClick: false
-      }
-    },   
-    props: ['id', 'name', 'email'],
-    computed: {
-      isDeleteClicked() {
-        return this.isDeleteClick
-      }
-    },
-    methods: {
-      openEditModal() {
-        console.log('edit')
-      },
-     deleteEmployee() {
-        this.isDeleteClick = true        
-      },
-      async closeModal(id) {
-        await deleteDoc(doc(db, 'employees', id))
-        this.$emit('deleteEmployee')
-        this.isDeleteClick = false
-      }
-    }
-}
-</script>
 
 <style lang="scss" scoped>
 .card {
