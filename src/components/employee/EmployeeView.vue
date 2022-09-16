@@ -18,7 +18,7 @@
     return data.isDeleteClick
   })
 
-  const emit = defineEmits('deleteEmployeeEmit')
+  const emit = defineEmits(['deleteEmployeeEmit'])
 
   function openEditModal() {
     console.log('edit')

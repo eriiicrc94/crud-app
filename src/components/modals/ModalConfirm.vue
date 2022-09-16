@@ -8,7 +8,7 @@ const props = defineProps({
     title: String
 })
 
-const emit = defineEmits('closeModal')
+const emit = defineEmits(['closeModal'])
 
 const isRegisterComp = computed(() => {
     return props.comp === 'register-view'
