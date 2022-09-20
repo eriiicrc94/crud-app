@@ -28,10 +28,10 @@ function closeModal() {
         <div class="modal-content text-center">
             <h1>{{title}}</h1>
             <div v-if="isRegisterComp">
-                <p ><b>{{props.name}}</b> has been registered successfully!!</p>
+                <p ><b>{{name}}</b> has been registered successfully!!</p>
             </div>
             <div v-if="isEmployeeViewComp">
-                <p>Are you sure do you want to delete <b>{{props.name}}</b>?</p>
+                <p>Are you sure do you want to delete <b>{{name}}</b>?</p>
             </div>            
             <button-common @click="closeModal()"
               title='Confirm'/>
