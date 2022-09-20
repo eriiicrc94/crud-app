@@ -1,16 +1,19 @@
 <script setup>
 import { reactive, computed, onMounted } from 'vue'
+import { useStore } from 'vuex'
 import EmployeeView from './employee/EmployeeView.vue'
 import { db } from '../firebase'
 import { collection, getDocs } from 'firebase/firestore'
 
+const store = useStore()
+
 const data = reactive({
   isLoading: false,
-  employees: []
+  employees:  []
 })
 
 const showEmployees = computed(() => {
-  return data.employees.length > 0 && data.isLoading === false
+  return store.getters.employees.length > 0 && data.isLoading === false
 })
 
 const showSpinner = computed(() => {
@@ -19,6 +22,7 @@ const showSpinner = computed(() => {
 
 async function getEmployees() {
   data.isLoading = true
+  store.dispatch('emptyEmployees')
   const querySnapshot = await getDocs(collection(db, 'employees'))
   try {
     if (querySnapshot.docs.length > 0) {
@@ -29,7 +33,7 @@ async function getEmployees() {
           name: doc.data().name,
           email: doc.data().email
         }
-        data.employees.push(result)
+        store.dispatch('addEmployees', result)
       })
     } else {
       data.isLoading = false
@@ -40,10 +44,12 @@ async function getEmployees() {
 }
 
 function employeeDeleted(id) {
-  data.employees = data.employees.filter(employee => employee.id !== id)
+  store.dispatch('deleteEmployee', id)
+  
 }
 
 onMounted(async () => {
+  
   getEmployees()
 })
 
@@ -52,12 +58,12 @@ onMounted(async () => {
 <template>
     <div class="container">
         <h1>Employees List</h1>
-        
+
         <div v-if="showSpinner" class="container text-center">
             <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
         </div>
         <div v-else-if="showEmployees" class="cards">
-            <employee-view v-for="emp in data.employees"
+            <employee-view v-for="emp in store.getters.employees"
                 :key="emp.id"
                 :name="emp.name"
                 :email="emp.email"
@@ -71,18 +77,18 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 
-.cards { 
+.cards {
   @media (min-width: 800px) {
-    display: grid; 
-    grid-template-columns: repeat(3, 1fr); 
-    grid-auto-rows: auto; 
-    grid-gap: 1rem; 
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: auto;
+    grid-gap: 1rem;
   }
   @media screen and (min-width: 501px) and (max-width:799px){
-    display: grid; 
-    grid-template-columns: repeat(2, 1fr); 
-    grid-auto-rows: auto; 
-    grid-gap: 1rem; 
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: auto;
+    grid-gap: 1rem;
   }
 }
 //DELETE
