@@ -8,8 +8,7 @@ import { collection, getDocs } from 'firebase/firestore'
 const store = useStore()
 
 const data = reactive({
-  isLoading: false,
-  employees:  []
+  isLoading: false
 })
 
 const showEmployees = computed(() => {
